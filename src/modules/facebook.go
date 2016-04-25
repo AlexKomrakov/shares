@@ -13,10 +13,22 @@ type FacebookResponse struct {
 }
 
 type Facebook struct {
-	shares.Stats
+	*shares.Stats
 }
 
-func (facebook Facebook) GetStats() shares.Stats {
+func (f Facebook) SetUrl(url string) {
+	f.GetStats().Url = url
+}
+
+func (f Facebook) GetStats() *shares.Stats {
+	return f.Stats
+}
+
+func (m Facebook) GetShares() int {
+	return m.GetStats().Shares
+}
+
+func (facebook Facebook) CalculateShares() *shares.Stats {
 	u, err := url.Parse(facebook.Url)
 	if err != nil {
 		panic(err)

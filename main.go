@@ -16,8 +16,21 @@ var server_address string
 var modules_container map[string] shares.HasStats
 
 func init() {
-	modules_container["facebook"] = modules.Facebook{}
-	modules_container["vk"] = modules.Vk{}
+	modules_container                = make(map[string] shares.HasStats)
+	modules_container["facebook"]    = modules.Facebook{&shares.Stats{}}
+	modules_container["vk"]          = modules.Vk{&shares.Stats{}}
+	modules_container["ok"]          = modules.Ok{&shares.Stats{}}
+	modules_container["google_plus"] = modules.Gp{&shares.Stats{}}
+	modules_container["my_mail"]     = modules.Mm{&shares.Stats{}}
+}
+
+func GetStats(url string) map[string] shares.HasStats {
+	for _, module := range modules_container {
+		module.SetUrl(url)
+		module.CalculateShares()
+	}
+
+	return modules_container
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {

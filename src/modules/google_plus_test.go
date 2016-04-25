@@ -6,9 +6,9 @@ import (
 	"github.com/alexkomrakov/shares/src"
 )
 
-func TestFacebook(t *testing.T) {
-	module := Facebook{&shares.Stats{}}
-	module.Url = "https://meduza.io/news/2016/03/30/v-windows-poyavitsya-bash"
+func TestGp(t *testing.T) {
+	module := Gp{&shares.Stats{}}
+	module.Url = "http://yandex.ru"
 	stats := module.CalculateShares()
 
 	assert.NotEmpty(t, stats.Shares)

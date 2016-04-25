@@ -6,5 +6,8 @@ type Stats struct {
 }
 
 type HasStats interface {
-	GetStats() Stats
+	GetStats() *Stats
+	GetShares() int
+	CalculateShares() *Stats
+	SetUrl(string)
 }

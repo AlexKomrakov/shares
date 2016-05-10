@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"github.com/alexkomrakov/shares/src"
 	"github.com/alexkomrakov/shares/src/modules"
+	"strings"
+	"encoding/json"
 )
 
 var server_address string
@@ -34,9 +36,35 @@ func GetStats(url string) map[string] shares.HasStats {
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "text/html")
+	res.Header().Set("Content-Type", "application/json")
 	res.WriteHeader(http.StatusOK)
-	fmt.Fprint(res, "Hello world")
+	url := req.URL.Query().Get("url")
+
+	services := req.URL.Query().Get("services")
+	services_list := []string{}
+	if (len(services) == 0) {
+		for k, _ := range modules_container {
+			services_list = append(services_list, k)
+		}
+	} else {
+		services_list = strings.Split(services, ",")
+	}
+	fmt.Println(services_list)
+
+	response := make(map[string]int)
+	for _, service := range services_list {
+		modules_container[service].SetUrl(url)
+		modules_container[service].CalculateShares()
+		response[service] = modules_container[service].GetShares()
+	}
+
+
+	b, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	fmt.Fprint(res, string(b))
 }
 
 func main() {

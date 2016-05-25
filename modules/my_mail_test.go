@@ -3,11 +3,10 @@ package modules
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
-	"github.com/alexkomrakov/shares/src"
 )
 
-func TestGp(t *testing.T) {
-	module := Gp{&shares.Stats{}}
+func TestMm(t *testing.T) {
+	module := Mm{&Stats{}}
 	module.Url = "http://yandex.ru"
 	stats := module.CalculateShares()
 

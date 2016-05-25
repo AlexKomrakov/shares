@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"github.com/alexkomrakov/shares/src"
 	"net/url"
 	"regexp"
 	"net/http"
@@ -10,14 +9,14 @@ import (
 )
 
 type Vk struct {
-	*shares.Stats
+	*Stats
 }
 
 func (v Vk) SetUrl(url string) {
 	v.GetStats().Url = url
 }
 
-func (v Vk) GetStats() *shares.Stats {
+func (v Vk) GetStats() *Stats {
 	return v.Stats
 }
 
@@ -25,7 +24,7 @@ func (m Vk) GetShares() int {
 	return m.GetStats().Shares
 }
 
-func (vk Vk) CalculateShares() *shares.Stats {
+func (vk Vk) CalculateShares() *Stats {
 	u, err := url.Parse(vk.Url)
 	if err != nil {
 		panic(err)

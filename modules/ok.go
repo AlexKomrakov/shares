@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"github.com/alexkomrakov/shares/src"
 	"net/url"
 	"regexp"
 	"net/http"
@@ -9,29 +8,29 @@ import (
 	"strconv"
 )
 
-type Mm struct {
-	*shares.Stats
+type Ok struct {
+	*Stats
 }
 
-func (m Mm) SetUrl(url string) {
+func (m Ok) SetUrl(url string) {
 	m.GetStats().Url = url
 }
 
-func (m Mm) GetStats() *shares.Stats {
+func (m Ok) GetStats() *Stats {
 	return m.Stats
 }
 
-func (m Mm) GetShares() int {
+func (m Ok) GetShares() int {
 	return m.GetStats().Shares
 }
 
-func (m Mm) CalculateShares() *shares.Stats {
+func (m Ok) CalculateShares() *Stats {
 	u, err := url.Parse(m.Url)
 	if err != nil {
 		panic(err)
 	}
 
-	response, err := http.Get("http://connect.mail.ru/share_count?url_list=" + u.String())
+	response, err := http.Get("https://connect.ok.ru/dk?st.cmd=extLike&uid=odklcnt0&ref=" + u.String())
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +40,7 @@ func (m Mm) CalculateShares() *shares.Stats {
 		panic(err)
 	}
 
-	re := regexp.MustCompile(`shares":([\d]+),`)
+	re := regexp.MustCompile(`,'(.+)'\)`)
 	result := re.FindAllStringSubmatch(string(response_body), -1)
 	if (len(result) > 0) {
 		str_count := result[0][len(result[0])-1]

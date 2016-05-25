@@ -1,0 +1,22 @@
+###
+# Примеры запуска
+# docker-compose up
+# docker-compose up beanstalkd redis mongo
+#
+# Запуск в режиме демона
+# docker-compose up -d
+#
+# Остановка
+# docker-compose stop
+#
+# Удаление
+# docker-compose rm
+###
+shares:
+  image: golang:1.6
+  working_dir: /go/src/shares
+  command: bash -c 'go get ./... && go build && shares'
+  ports:
+    - "8000:8000"
+  volumes:
+    - .:/go/src/shares

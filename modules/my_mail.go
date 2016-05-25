@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"github.com/alexkomrakov/shares/src"
 	"net/url"
 	"regexp"
 	"net/http"
@@ -9,29 +8,29 @@ import (
 	"strconv"
 )
 
-type Gp struct {
-	*shares.Stats
+type Mm struct {
+	*Stats
 }
 
-func (m Gp) SetUrl(url string) {
+func (m Mm) SetUrl(url string) {
 	m.GetStats().Url = url
 }
 
-func (m Gp) GetStats() *shares.Stats {
+func (m Mm) GetStats() *Stats {
 	return m.Stats
 }
 
-func (m Gp) GetShares() int {
+func (m Mm) GetShares() int {
 	return m.GetStats().Shares
 }
 
-func (m Gp) CalculateShares() *shares.Stats {
+func (m Mm) CalculateShares() *Stats {
 	u, err := url.Parse(m.Url)
 	if err != nil {
 		panic(err)
 	}
 
-	response, err := http.Get("https://plusone.google.com/u/0/_/+1/fastbutton?count=true&url=" + u.String())
+	response, err := http.Get("http://connect.mail.ru/share_count?url_list=" + u.String())
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +40,7 @@ func (m Gp) CalculateShares() *shares.Stats {
 		panic(err)
 	}
 
-	re := regexp.MustCompile(`Oy">>?([\d]+)<`)
+	re := regexp.MustCompile(`shares":([\d]+),`)
 	result := re.FindAllStringSubmatch(string(response_body), -1)
 	if (len(result) > 0) {
 		str_count := result[0][len(result[0])-1]

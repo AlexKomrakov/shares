@@ -1,4 +1,4 @@
-package shares
+package modules
 
 type Stats struct {
 	Url string

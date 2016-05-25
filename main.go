@@ -8,37 +8,30 @@ import (
 	"github.com/stretchr/graceful"
 	"time"
 	"fmt"
-	"github.com/alexkomrakov/shares/src"
-	"github.com/alexkomrakov/shares/src/modules"
+	"shares/modules"
 	"strings"
 	"encoding/json"
 )
 
 var server_address string
-var modules_container map[string] shares.HasStats
+var modules_container map[string] modules.HasStats
 
 func init() {
-	modules_container                = make(map[string] shares.HasStats)
-	modules_container["facebook"]    = modules.Facebook{&shares.Stats{}}
-	modules_container["vk"]          = modules.Vk{&shares.Stats{}}
-	modules_container["ok"]          = modules.Ok{&shares.Stats{}}
-	modules_container["google_plus"] = modules.Gp{&shares.Stats{}}
-	modules_container["my_mail"]     = modules.Mm{&shares.Stats{}}
-}
-
-func GetStats(url string) map[string] shares.HasStats {
-	for _, module := range modules_container {
-		module.SetUrl(url)
-		module.CalculateShares()
-	}
-
-	return modules_container
+	modules_container                  = make(map[string] modules.HasStats)
+	modules_container["facebook"]      = modules.Facebook{&modules.Stats{}}
+	modules_container["vk"]            = modules.Vk{&modules.Stats{}}
+	modules_container["odnoklassniki"] = modules.Ok{&modules.Stats{}}
+	modules_container["google_plus"]   = modules.Gp{&modules.Stats{}}
+	modules_container["my_mail"]       = modules.Mm{&modules.Stats{}}
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusOK)
 	url := req.URL.Query().Get("url")
+	if url == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	services := req.URL.Query().Get("services")
 	services_list := []string{}
@@ -49,13 +42,13 @@ func Index(res http.ResponseWriter, req *http.Request) {
 	} else {
 		services_list = strings.Split(services, ",")
 	}
-	fmt.Println(services_list)
 
 	response := make(map[string]int)
 	for _, service := range services_list {
 		modules_container[service].SetUrl(url)
 		modules_container[service].CalculateShares()
 		response[service] = modules_container[service].GetShares()
+		response["total"] += response[service]
 	}
 
 

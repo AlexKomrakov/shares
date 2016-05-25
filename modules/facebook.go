@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"github.com/alexkomrakov/shares/src"
 	"net/http"
 	"encoding/json"
 	"io/ioutil"
@@ -13,14 +12,14 @@ type FacebookResponse struct {
 }
 
 type Facebook struct {
-	*shares.Stats
+	*Stats
 }
 
 func (f Facebook) SetUrl(url string) {
 	f.GetStats().Url = url
 }
 
-func (f Facebook) GetStats() *shares.Stats {
+func (f Facebook) GetStats() *Stats {
 	return f.Stats
 }
 
@@ -28,7 +27,7 @@ func (m Facebook) GetShares() int {
 	return m.GetStats().Shares
 }
 
-func (facebook Facebook) CalculateShares() *shares.Stats {
+func (facebook Facebook) CalculateShares() *Stats {
 	u, err := url.Parse(facebook.Url)
 	if err != nil {
 		panic(err)
@@ -46,6 +45,7 @@ func (facebook Facebook) CalculateShares() *shares.Stats {
 	}
 
 	err = json.Unmarshal(response_body, &response_struct)
+
 	if err != nil {
 		panic(err)
 	}
